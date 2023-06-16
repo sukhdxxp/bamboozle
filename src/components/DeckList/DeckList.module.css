@@ -1,0 +1,10 @@
+.deckListWrapper {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.deckListItem {
+    flex: 0 0 50%;
+    box-sizing: border-box;
+    padding: 10px;
+}
