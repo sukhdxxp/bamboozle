@@ -1,6 +1,5 @@
 import { ParticipantType } from "@/models/Room.model";
-import { QnAItem } from "@/components/DeckCard/Deck.types";
-import { DeckType } from "@/models/Deck.model";
+import { DeckType, MappedQnaType } from "@/models/Deck.model";
 
 export enum GameState {
   UNKNOWN = "unknown",
@@ -15,7 +14,12 @@ type ClientGameParticipantType = ParticipantType & {
   score: number;
 };
 
-type GameParticipantType = ClientGameParticipantType & {
+export type ClientGameParticipantsType = {
+  [key: string]: ClientGameParticipantType;
+};
+
+type GameScorecardItem = {
+  score: number;
   answers: {
     [key: string]: {
       // roundID
@@ -29,12 +33,8 @@ type GameParticipantType = ClientGameParticipantType & {
   };
 };
 
-export type GameParticipantsType = {
-  [key: string]: GameParticipantType;
-};
-
-export type ClientGameParticipantsType = {
-  [key: string]: ClientGameParticipantType;
+export type GameScorecard = {
+  [key: string]: GameScorecardItem;
 };
 
 export type CurrentQuestionType = {
@@ -57,6 +57,6 @@ export type GameClientStateType = {
 export interface IGame {
   id?: string;
   clientState: GameClientStateType;
-  qna: QnAItem[];
-  participants: GameParticipantsType;
+  qna: MappedQnaType;
+  scorecard: GameScorecard;
 }

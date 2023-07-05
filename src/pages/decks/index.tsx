@@ -14,7 +14,6 @@ function DeckPage() {
     return <div>No Data Found</div>;
   }
 
-  console.log(decks);
   return (
     <div>
       <Head>

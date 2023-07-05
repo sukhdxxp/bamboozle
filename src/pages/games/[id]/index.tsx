@@ -34,10 +34,16 @@ export default function GamePage() {
   }
   const game: GameClientStateType = object.val();
 
+  const participantAnswerPath = getParticipantAnswerPath(
+    gameID,
+    user.uid,
+    game.currentRoundIndex
+  );
+
   const handleTrickAnswerSubmission = async (answerText: string) => {
     const trickAnswerRef = ref(
       firebaseDB,
-      `games/${gameID}/participants/${user.uid}/answers/${game.currentRoundIndex}/trickAnswer`
+      `${participantAnswerPath}/trickAnswer`
     );
     const trickAnswer = {
       [uuidv4()]: answerText,
@@ -48,7 +54,7 @@ export default function GamePage() {
   const handleCorrectAnswerSubmission = async (answerText: string) => {
     const correctAnswerRef = ref(
       firebaseDB,
-      `games/${gameID}/participants/${user.uid}/answers/${game.currentRoundIndex}/correctAnswer`
+      `${participantAnswerPath}/correctAnswer`
     );
     await push(correctAnswerRef, answerText);
   };
@@ -121,3 +127,11 @@ function GameStateComponent({
       return <GameScoreCard game={game} />;
   }
 }
+
+const getParticipantAnswerPath = (
+  gameID: string,
+  userId: string,
+  currentRoundIndex: number
+) => {
+  return `games/${gameID}/scorecard/${userId}/answers/${currentRoundIndex}`;
+};

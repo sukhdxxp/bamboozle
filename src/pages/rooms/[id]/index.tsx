@@ -23,7 +23,6 @@ export default function RoomPage() {
 
   useEffect(() => {
     if (user) {
-      console.log(roomID, user);
       const participantRef = ref(
         firebaseDB,
         `rooms/${roomID}/participants/${user?.uid}`

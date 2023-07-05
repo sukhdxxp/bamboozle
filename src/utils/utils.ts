@@ -1,4 +1,4 @@
-export function utils<T>(arr: T[], n = 10): T[] {
+export function getRandomArraySubset<T>(arr: T[], n = 10): T[] {
   let result = new Array(n),
     len = arr.length,
     taken = new Array(len);

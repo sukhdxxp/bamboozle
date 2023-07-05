@@ -55,7 +55,7 @@ export class Room {
 
   public getParticipants() {
     if (!this.participants) {
-      throw new Error("[room-getParticipants]: No participants");
+      throw new Error("[room-getParticipants]: No scorecard");
     }
     return this.participants;
   }
@@ -75,7 +75,7 @@ export class Room {
     const currentParticipant = Room.createParticipantFromUser(user);
 
     const deck = new Deck(currentDeckID);
-    const deckData = await deck.retrieve();
+    const deckData = await deck.get();
 
     const room: RoomType = {
       createdBy: user.uid,

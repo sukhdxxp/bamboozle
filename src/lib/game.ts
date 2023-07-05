@@ -1,19 +1,17 @@
-import { v4 as uuidv4 } from "uuid";
-
 import {
   GameClientStateType,
-  GameParticipantsType,
+  GameScorecard,
   GameState,
   IGame,
 } from "@/models/Game.model";
 import { firebaseDatabase } from "./data/firebase-admin";
 import { ParticipantType } from "@/models/Room.model";
-import { QnAItem } from "@/components/DeckCard/Deck.types";
-import { cleanupUndefinedValues, utils } from "@/utils/utils";
+import { cleanupUndefinedValues } from "@/utils/utils";
 import { fetchValueFromDatabase } from "@/utils/db";
 import { Deck } from "@/lib/deck";
+import { MappedQnaType } from "@/models/Deck.model";
 
-const CONFIG = {
+const GAME_CONFIG = {
   totalRounds: 3,
   activeRoundDuration: 10000,
   waitingTime: 5000,
@@ -30,17 +28,17 @@ export class Game implements IGame {
   deckId?: string;
   clientState: GameClientStateType = {
     state: GameState.UNKNOWN,
-    totalRounds: CONFIG.totalRounds,
+    totalRounds: GAME_CONFIG.totalRounds,
     currentRoundIndex: 0,
-    currentRoundDuration: CONFIG.waitingTime,
+    currentRoundDuration: GAME_CONFIG.waitingTime,
     participants: {},
     currentQuestion: {
       question: "",
       answerOptions: {},
     },
   };
-  qna: QnAItem[] = [];
-  participants: GameParticipantsType = {};
+  qna: MappedQnaType = {};
+  scorecard: GameScorecard = {};
 
   constructor({ deckID, participants, gameID }: GameConstructProps) {
     if (gameID) {
@@ -72,17 +70,46 @@ export class Game implements IGame {
     this.incrementRoundIndex();
     this.populateCurrentQnA();
     this.clientState.state = GameState.WRITE_TRICK_ANSWER;
-    this.clientState.currentRoundDuration = CONFIG.activeRoundDuration;
+    this.clientState.currentRoundDuration = GAME_CONFIG.activeRoundDuration;
     await this.updateGameInDatabase();
     setTimeout(() => {
       this.moveGameStateToAnswerPicker();
     }, this.clientState.currentRoundDuration);
   }
 
-  async moveGameStateToAnswerPicker() {
+  public getId() {
+    if (!this.id) {
+      throw new Error("Game ID not generated");
+    }
+    return this.id;
+  }
+
+  private transformParticipantsToGameParticipants(
+    participants: GameConstructProps["participants"]
+  ) {
+    if (!participants) {
+      throw new Error("No scorecard provided");
+    }
+    this.scorecard = {};
+    Object.keys(participants).forEach((participantID) => {
+      this.clientState.participants = {
+        ...this.clientState.participants,
+        [participantID]: {
+          ...participants[participantID],
+          score: 0,
+        },
+      };
+      this.scorecard[participantID] = {
+        score: 0,
+        answers: {},
+      };
+    });
+  }
+
+  private async moveGameStateToAnswerPicker() {
     await this.populateGameFromDatabase(this.id);
     this.clientState.state = GameState.PICK_ANSWER;
-    this.clientState.currentRoundDuration = CONFIG.activeRoundDuration;
+    this.clientState.currentRoundDuration = GAME_CONFIG.activeRoundDuration;
     this.populateAnswerOptionsInCurrentQnA();
     await this.updateGameInDatabase();
 
@@ -91,7 +118,7 @@ export class Game implements IGame {
     }, this.clientState.currentRoundDuration);
   }
 
-  populateCurrentQnA() {
+  private populateCurrentQnA() {
     if (!this.qna || !this.clientState.currentRoundIndex) {
       throw new Error(
         "Game not properly initialized. QnA or current round index missing"
@@ -103,27 +130,11 @@ export class Game implements IGame {
     };
   }
 
-  incrementRoundIndex() {
-    const currentIndex = this.clientState.currentRoundIndex || 0;
-    this.clientState.currentRoundIndex = currentIndex + 1;
+  private incrementRoundIndex() {
+    this.clientState.currentRoundIndex = this.clientState.currentRoundIndex + 1;
   }
 
-  async populateGameFromDatabase(gameID?: string) {
-    if (!gameID) {
-      throw new Error("Game ID not provided to populate game from database");
-    }
-    const game = await fetchValueFromDatabase(`games/${gameID}`);
-    if (!game) {
-      throw new Error("Game not found");
-    }
-    this.id = gameID;
-    this.deckId = game.deckId;
-    this.clientState = game.clientState;
-    this.qna = game.qna;
-    this.participants = game.participants;
-  }
-
-  async updateGameInDatabase() {
+  private async updateGameInDatabase() {
     const game = cleanupUndefinedValues(this);
     if (!this.id) {
       const gameId = await firebaseDatabase.ref(`games`).push(game).key;
@@ -136,47 +147,35 @@ export class Game implements IGame {
     }
   }
 
-  transformParticipantsToGameParticipants(
-    participants: GameConstructProps["participants"]
-  ) {
-    if (!participants) {
-      throw new Error("No participants provided");
-    }
-    Object.keys(participants).forEach((participantID) => {
-      this.participants = {
-        ...this.participants,
-        [participantID]: {
-          ...participants[participantID],
-          score: 0,
-          answers: {},
-        },
-      };
-      this.clientState.participants = {
-        ...this.clientState.participants,
-        [participantID]: {
-          ...participants[participantID],
-          score: 0,
-        },
-      };
-    });
-  }
-
-  async populateDeck() {
+  private async populateDeck() {
     if (!this.deckId) {
       throw new Error("Deck ID not provided");
     }
     const deck = new Deck(this.deckId);
-    this.clientState.deck = await deck.retrieve();
+    this.clientState.deck = await deck.get();
   }
 
-  async populateQnA() {
-    if (!this.clientState.deck) {
-      throw new Error("Deck not initialized");
+  private async populateQnA() {
+    if (!this.deckId || !this.clientState.totalRounds) {
+      throw new Error("Deck ID or total rounds not provided");
     }
-    const deckQna = await fetchValueFromDatabase(`deckQna/${this.deckId}`);
-    const randomQnaDeck = utils(deckQna, this.clientState.totalRounds);
+    const deck = new Deck(this.deckId);
+    this.qna = await deck.getRandomQnaItems(this.clientState.totalRounds);
+  }
 
-    this.qna = arrayToObject(randomQnaDeck);
+  private async populateGameFromDatabase(gameID?: string) {
+    if (!gameID) {
+      throw new Error("Game ID not provided to populate game from database");
+    }
+    const game = await fetchValueFromDatabase(`games/${gameID}`);
+    if (!game) {
+      throw new Error("Game not found");
+    }
+    this.id = gameID;
+    this.deckId = game.deckId;
+    this.clientState = game.clientState;
+    this.qna = game.qna;
+    this.scorecard = game.scorecard;
   }
 
   private populateAnswerOptionsInCurrentQnA() {
@@ -192,8 +191,8 @@ export class Game implements IGame {
         this.qna[currentRoundIndex].answer.text,
     };
 
-    Object.keys(this.participants || {}).forEach((participantID) => {
-      const participant = this.participants?.[participantID];
+    Object.keys(this.scorecard || {}).forEach((participantID) => {
+      const participant = this.scorecard?.[participantID];
       const participantAnswers = participant?.answers || {};
       const participantCurrentAnswer = participantAnswers[currentRoundIndex];
       if (participantCurrentAnswer) {
@@ -210,14 +209,14 @@ export class Game implements IGame {
   }
 
   private async endCurrentRound() {
-    if (!this.clientState.currentQuestion.question || !this.participants) {
-      throw new Error("Current QnA or participants not initialized");
+    if (!this.clientState.currentQuestion.question || !this.scorecard) {
+      throw new Error("Current QnA or scorecard not initialized");
     }
     await this.populateGameFromDatabase(this.id);
     const currentRoundIndex = this.clientState.currentRoundIndex || 0;
     const answer = this.qna[currentRoundIndex].answer;
-    Object.keys(this.participants).forEach((participantID) => {
-      const participant = this.participants?.[participantID];
+    Object.keys(this.scorecard).forEach((participantID) => {
+      const participant = this.scorecard?.[participantID];
       if (!participant) {
         throw new Error("Participant not found");
       }
@@ -230,8 +229,8 @@ export class Game implements IGame {
       const trickAnswerId = Object.keys(
         participantAnswers.trickAnswer || {}
       )[0];
-      Object.keys(this.participants || {}).forEach((participantID) => {
-        const competitor = this.participants?.[participantID];
+      Object.keys(this.scorecard || {}).forEach((participantID) => {
+        const competitor = this.scorecard?.[participantID];
         const competitorCorrectAnswer =
           competitor?.answers[currentRoundIndex].correctAnswer || {};
         const competitorCorrectAnswerId = Object.values(
@@ -241,6 +240,7 @@ export class Game implements IGame {
           participant.score += 1;
         }
       });
+      this.clientState.participants[participantID].score = participant.score;
     });
     if (currentRoundIndex === this.clientState.totalRounds) {
       this.clientState.state = GameState.FINISHED;
@@ -249,25 +249,4 @@ export class Game implements IGame {
     }
     await this.updateGameInDatabase();
   }
-
-  public getId() {
-    if (!this.id) {
-      throw new Error("Game ID not generated");
-    }
-    return this.id;
-  }
 }
-
-const arrayToObject = (array: any[]) => {
-  const obj: any = {};
-  array.forEach((item, index) => {
-    obj[index + 1] = {
-      question: item.question,
-      answer: {
-        id: uuidv4(),
-        text: item.answer,
-      },
-    };
-  });
-  return obj;
-};
