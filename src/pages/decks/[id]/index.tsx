@@ -1,35 +1,31 @@
 "use client";
 
 import Head from "next/head";
-import { useObject } from "react-firebase-hooks/database";
-import { firebaseDB, ref } from "../../../lib/data/firebase";
 import { useRouter } from "next/router";
-import { DeckType } from "../../../components/DeckCard/Deck.types";
 import DeckIcon from "../../../components/DeckIcon";
 import axios from "../../../utils/axios";
+import { useDeck } from "@/hooks/useDecks";
+import Button from "@/components/Button";
 
 export default function DeckPage() {
   const router = useRouter();
   const deckID = router.query.id as string;
 
-  const [object, loading, error] = useObject(
-    ref(firebaseDB, `decks/${deckID}`)
-  );
+  const [deck, loading, error] = useDeck(deckID);
   if (loading) {
     return <div>Loading...</div>;
   } else if (error) {
     return <div>Error: {error.toString()}</div>;
-  } else if (!object) {
+  } else if (!deck) {
     return <div>No Data Found</div>;
   }
-  const deck = object.val() as DeckType;
 
   const handleButtonClick = async () => {
     const response = await axios.post("/api/rooms", {
       currentDeckID: deckID,
       title: `Room for ${deck.title}`,
     });
-    if( response && response.status === 200 && response?.data?.id) {
+    if (response && response.status === 200 && response?.data?.id) {
       router.push(`/rooms/${response.data.id}`);
     }
   };
@@ -48,12 +44,7 @@ export default function DeckPage() {
       <h2 className="mt-8 mb-4 font-light text-xl dark:text-white">
         {deck.description}
       </h2>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded mt-16"
-        onClick={handleButtonClick}
-      >
-        Create Room
-      </button>
+      <Button onClick={handleButtonClick}>Create Room</Button>
     </div>
   );
 }

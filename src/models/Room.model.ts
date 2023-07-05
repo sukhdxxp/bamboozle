@@ -1,3 +1,5 @@
+import { DeckType } from "@/models/Deck.model";
+
 export type ParticipantType = {
   id: string;
   name: string;
@@ -7,10 +9,12 @@ export type ParticipantType = {
 };
 
 export type RoomType = {
+  id?: string;
   createdBy: string;
   createdAt: string;
   title: string;
-  currentDeckID: string;
+  currentDeck: DeckType;
+  currentGameId?: string;
   participants: {
     [key: string]: ParticipantType;
   };

@@ -1,11 +1,11 @@
-export type DeckType = {
-  id: string;
-  title: string;
-  description: string;
+export type QnAItem = {
+  question: string;
+  answer: {
+    id: string;
+    text: string;
+  };
 };
 
-export type DeckListType = [DeckType];
-
-export type DeckCardProps = {
-  deck: DeckType;
+export type QnAType = {
+  [key: string]: QnAItem;
 };

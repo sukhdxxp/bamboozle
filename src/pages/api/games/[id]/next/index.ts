@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { firebaseAdminAuth } from "@/lib/data/firebase-admin";
-import { Room } from "@/lib/room";
+import { Game } from "@/lib/game";
 
 export default async function handler(
   req: NextApiRequest,
@@ -17,15 +17,22 @@ export default async function handler(
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
-    const { title, currentDeckID } = req.body;
-    if (!title || !currentDeckID) {
+    const { id } = req.query;
+    const gameID = id as string;
+    if (!gameID) {
       return res.status(400).json({ message: "Missing Required Fields" });
     }
-    const room = await Room.create({ currentDeckID, user });
+
+    const game = new Game({
+      gameID,
+    });
+
+    await game.init();
+    await game.startNewRound();
 
     return res.status(200).json({
       status: "success",
-      id: room.id,
+      data: null,
     });
   }
 }

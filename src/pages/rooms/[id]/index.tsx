@@ -1,27 +1,29 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useObject } from "react-firebase-hooks/database";
-import { firebaseAuth, firebaseDB, ref } from "../../../lib/data/firebase";
+import { firebaseAuth, firebaseDB, ref } from "@/lib/data/firebase";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { RoomType, ParticipantType } from "../../../models/Room.model";
+import { ParticipantType } from "@/models/Room.model";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { onDisconnect, set } from "firebase/database";
 import { useEffect } from "react";
+import axios from "../../../utils/axios";
+
+import Button from "@/components/Button";
+import { useRoom } from "@/hooks/useRoom";
+import DeckCard from "@/components/DeckCard";
 
 export default function RoomPage() {
   const router = useRouter();
   const [user, userLoading] = useAuthState(firebaseAuth);
   const roomID = router.query.id as string;
 
-  const [object, loading, error] = useObject(
-    ref(firebaseDB, `rooms/${roomID}`)
-  );
+  const [room, loading, error] = useRoom(roomID);
 
-   useEffect(() => {
-
-    if(user) {
+  useEffect(() => {
+    if (user) {
+      console.log(roomID, user);
       const participantRef = ref(
         firebaseDB,
         `rooms/${roomID}/participants/${user?.uid}`
@@ -46,40 +48,62 @@ export default function RoomPage() {
     return <div>Loading...</div>;
   } else if (error) {
     return <div>Error: {error.toString()}</div>;
-  } else if (!object || !user) {
+  } else if (!room || !user) {
     return <div>No Data Found</div>;
   }
 
- 
-  
-  const room = object.val() as RoomType;
+  if (room.currentGameId) {
+    router.push(`/games/${room.currentGameId}`);
+  }
+
+  const handleButtonClick = () => {
+    axios.post("/api/games", {
+      roomID: roomID,
+    });
+  };
 
   return (
-    <div>
+    <div className="container mx-auto">
       <Head>
         <title>RoomPage</title>
       </Head>
       <div>
-        <h1>RoomPage: {room.title}</h1>
-        <h2>Players</h2>
-        {Object.keys(room.participants).map((key) => {
-          return (
-            <ParticipantRow key={key} participant={room.participants[key]} />
-          );
-        })}
+        <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white my-4">
+          Game Room
+        </h5>
+        <DeckCard deck={room.currentDeck} shouldCollapseDescription={false} />
+        <div className="bg-sky-500/20 my-4 py-4 px-6 rounded-lg">
+          <h2 className="text-2xl text-gray-900 dark:text-white">Players</h2>
+          <div className="mt-6">
+            {Object.keys(room.participants).map((key) => {
+              return (
+                <ParticipantRow
+                  key={key}
+                  participant={room.participants[key]}
+                />
+              );
+            })}
+          </div>
+        </div>
+        <Button onClick={handleButtonClick}>Start Game</Button>
       </div>
     </div>
   );
 }
 
 function ParticipantRow({ participant }: { participant: ParticipantType }) {
-  //simple component to display all properties of a participant
+  const avatarRingColor = participant.isOnline
+    ? "dark:ring-green-500"
+    : "dark:ring-gray-500";
+
   return (
-    <div>
-      <div>{participant.name}</div>
-      <img src ={participant.avatar} alt="avatar"/>
-      <div>{participant.isOnline}</div>
-      <div>{participant.lastSeen}</div>
+    <div className="flex content-center my-4">
+      <img
+        className={`w-10 h-10 p-1 rounded-full ring-2 ring-gray-300 ${avatarRingColor}`}
+        src={participant.avatar}
+        alt="Bordered avatar"
+      />
+      <div className={"ml-4 flex items-center"}>{participant.name}</div>
     </div>
   );
 }

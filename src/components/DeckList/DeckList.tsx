@@ -1,10 +1,10 @@
-import { DeckListType } from "../DeckCard/Deck.types";
 import DeckCard from "../DeckCard";
 import styles from "./DeckList.module.css";
 import Link from "next/link";
+import { DeckType } from "@/models/Deck.model";
 
 type DeckListProps = {
-  decks: DeckListType;
+  decks: DeckType[];
 };
 
 export default function DeckList({ decks }: DeckListProps) {
@@ -17,7 +17,7 @@ export default function DeckList({ decks }: DeckListProps) {
         {decks.map((deck) => {
           return (
             <Link
-              className={styles.deckListItem}
+              className={`${styles.deckListItem} cursor-pointer`}
               key={deck.id}
               href={`/decks/${deck.id}`}
             >

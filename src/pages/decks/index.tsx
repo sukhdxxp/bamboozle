@@ -1,28 +1,20 @@
 "use client";
-import { useList } from "react-firebase-hooks/database";
-import { firebaseDB, ref } from "../../lib/data/firebase";
 
 import DeckList from "../../components/DeckList/DeckList";
-import { DeckListType } from "../../components/DeckCard/Deck.types";
 import Head from "next/head";
+import { useDecks } from "@/hooks/useDecks";
 
 function DeckPage() {
-  const [snapshots, loading, error] = useList(ref(firebaseDB, "decks"));
+  const [decks, loading, error] = useDecks();
   if (loading) {
     return <div>Loading...</div>;
   } else if (error) {
     return <div>Error: {error.toString()}</div>;
-  } else if (!snapshots || snapshots.length === 0) {
+  } else if (!decks || decks.length === 0) {
     return <div>No Data Found</div>;
   }
 
-  const decks = snapshots.map((v) => {
-    return {
-      id: v.key,
-      ...v.val(),
-    };
-  }) as unknown as DeckListType;
-
+  console.log(decks);
   return (
     <div>
       <Head>
