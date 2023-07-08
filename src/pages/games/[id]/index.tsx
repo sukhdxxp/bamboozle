@@ -59,10 +59,8 @@ export default function GamePage() {
     await push(correctAnswerRef, answerText);
   };
 
-  const handleNextRoundTrigger = () => {
-    axios.post(`/api/games/${gameID}/next`).then((res) => {
-      console.log(res);
-    });
+  const handleNextRoundTrigger = async () => {
+    await axios.post(`/api/games/${gameID}/next`);
   };
 
   return (

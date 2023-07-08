@@ -1,7 +1,8 @@
 "use client";
+
 import { FcGoogle } from "react-icons/fc";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { firebaseAuth } from "../../lib/data/firebase";
+import { firebaseAuth } from "@/lib/data/firebase";
 import { useRouter } from "next/router";
 
 function LoginScreen() {
@@ -10,7 +11,7 @@ function LoginScreen() {
   const GoogleLogin = async () => {
     try {
       await signInWithPopup(firebaseAuth, googleProvider);
-      router.push("/user");
+      await router.push("/user");
     } catch (e) {
       console.log(e);
     }

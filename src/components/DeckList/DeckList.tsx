@@ -1,5 +1,4 @@
 import DeckCard from "../DeckCard";
-import styles from "./DeckList.module.css";
 import Link from "next/link";
 import { DeckType } from "@/models/Deck.model";
 
@@ -9,15 +8,13 @@ type DeckListProps = {
 
 export default function DeckList({ decks }: DeckListProps) {
   return (
-    <div>
-      <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
-        Decks
-      </h1>
-      <div className={styles.deckListWrapper}>
+    <div className="px-4 my-4">
+      <h1 className="text-xl">Choose a deck</h1>
+      <div className="mt-2">
         {decks.map((deck) => {
           return (
             <Link
-              className={`${styles.deckListItem} cursor-pointer`}
+              className="cursor-pointer mt-2 block"
               key={deck.id}
               href={`/decks/${deck.id}`}
             >

@@ -22,7 +22,6 @@ export default function DeckIcon({
   id?: string;
   className?: string;
 }) {
-  console.log(className);
   switch (id) {
     case "5c31acda71d37ab784ca76b9":
       return <ImBook className={className} />;

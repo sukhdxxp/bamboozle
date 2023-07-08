@@ -8,7 +8,6 @@ export default function GameScoreCard({ game }: GameScoreCardProps) {
   const sortedParticipants = Object.values(participants).sort((a, b) => {
     return b.score - a.score;
   });
-  console.log(sortedParticipants);
   return (
     <div className="p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 flex">
       <div className="flex flex-col">

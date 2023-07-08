@@ -1,10 +1,11 @@
 "use client";
 
-import DeckList from "../../components/DeckList/DeckList";
+import DeckList from "../components/DeckList/DeckList";
 import Head from "next/head";
 import { useDecks } from "@/hooks/useDecks";
+import Header from "@/components/Header";
 
-function DeckPage() {
+function HomePage() {
   const [decks, loading, error] = useDecks();
   if (loading) {
     return <div>Loading...</div>;
@@ -17,11 +18,12 @@ function DeckPage() {
   return (
     <div>
       <Head>
-        <title>DeckPage</title>
+        <title>Bamboozle - Home</title>
       </Head>
+      <Header />
       <DeckList decks={decks} />
     </div>
   );
 }
 
-export default DeckPage;
+export default HomePage;
