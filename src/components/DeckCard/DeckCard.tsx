@@ -1,28 +1,45 @@
-import DeckIcon from "../DeckIcon";
 import { DeckType } from "@/models/Deck.model";
+import Button from "@/components/Button";
+import { getDeckUiConfig } from "@/components/DeckCard/utils";
+import React from "react";
+import axios from "@/utils/axios";
+import { useRouter } from "next/router";
 
 type DeckCardProps = {
   deck: DeckType;
-  shouldCollapseDescription?: boolean;
 };
-export default function DeckCard({
-  deck: { id, title, description },
-  shouldCollapseDescription = true,
-}: DeckCardProps) {
-  const collapsed = shouldCollapseDescription ? "line-clamp-2" : "";
+export default function DeckCard({ deck: { id, title } }: DeckCardProps) {
+  const uiConfig = getDeckUiConfig(id);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const router = useRouter();
+
+  const handleButtonClick = async () => {
+    setIsLoading(true);
+    const response = await axios.post("/api/rooms", {
+      currentDeckID: id,
+      title: `Room for ${title}`,
+    });
+    if (response && response.status === 200 && response?.data?.id) {
+      await router.push(`/rooms/${response.data.id}`);
+    }
+    setIsLoading(false);
+  };
   return (
-    <div className="flex items-stretch relative border border-gray-200 rounded-lg drop-shadow-md hover:bg-gray-100  bg-gradient-to-r from-sky-500 to-cyan-400 text-slate-100">
-      <div className="flex items-center content-center flex-none w-24 relative before:content[''] before:absolute before:w-1/2 before:h-full before:block before:bg-slate-50 before:top-0 before:left-0 before:-z-10 before:opacity-25 after:content[''] after:absolute after:h-full after:w-1/2 after:block  after:bg-slate-50 after:right-0 after:top-0 after:opacity-25 after:rounded-tr-full after:rounded-br-full">
-        <DeckIcon id={id} className="ml-4 w-12 h-12 z-10 text-slate-100" />
-      </div>
-      <div className="flex-3 ml-2 p-4">
-        <h2 className="mb-1 text-md tracking-tight text-slate-100">{title}</h2>
-        <div className={`font-light text-sm text-slate-100 ${collapsed}`}>
-          {description}
-        </div>
+    <div
+      className={`flex-none cursor-pointer rounded-lg shadow bg-blob-bg bg-center bg-cover w-64 mx-2 ${uiConfig.bgColor}`}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="p-8" src={uiConfig.imageUrl} alt="Deck Image" />
+      <div className="px-5 pb-5 flex justify-between items-center">
+        <h5 className="text-md tracking-tight text-gray-900">{title}</h5>
+        <Button
+          className={uiConfig.buttonColor}
+          onClick={handleButtonClick}
+          isLoading={isLoading}
+        >
+          Play
+        </Button>
       </div>
     </div>
   );
 }
-
-//relative h-full bg-red before:content[''] before:absolute before:w-24 before:h-full before:rounded-full before:block before:bg-slate-50 opacity-5 before:top-0 before:-left-12 overflow-hidden

@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { firebaseAuth, firebaseDB, ref } from "@/lib/data/firebase";
@@ -70,7 +69,7 @@ export default function RoomPage() {
         <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white my-4">
           Game Room
         </h5>
-        <DeckCard deck={room.currentDeck} shouldCollapseDescription={false} />
+        <DeckCard deck={room.currentDeck} />
         <div className="bg-sky-500/20 my-4 py-4 px-6 rounded-lg">
           <h2 className="text-2xl text-gray-900 dark:text-white">Players</h2>
           <div className="mt-6">
@@ -97,6 +96,7 @@ function ParticipantRow({ participant }: { participant: ParticipantType }) {
 
   return (
     <div className="flex content-center my-4">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={`w-10 h-10 p-1 rounded-full ring-2 ring-gray-300 ${avatarRingColor}`}
         src={participant.avatar}

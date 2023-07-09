@@ -57,29 +57,23 @@ export default function UserDropdown() {
       />
       <div
         id="userDropdown"
-        className={`absolute right-0 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600 ${dropdownClass}`}
+        className={`absolute right-0 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 ${dropdownClass}`}
       >
-        <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+        <div className="px-4 py-3 text-sm text-gray-900">
           <div>{user.displayName}</div>
           <div className="font-medium truncate">{user.email}</div>
         </div>
         <ul
-          className="py-2 text-sm text-gray-700 dark:text-gray-200"
+          className="py-2 text-sm text-gray-700"
           aria-labelledby="avatarButton"
         >
           <li>
-            <a
-              href="#"
-              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
+            <a href="#" className="block px-4 py-2 hover:bg-gray-100">
               Profile
             </a>
           </li>
           <li>
-            <a
-              href="#"
-              className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
+            <a href="#" className="block px-4 py-2 hover:bg-gray-100">
               Settings
             </a>
           </li>
@@ -87,7 +81,7 @@ export default function UserDropdown() {
         <div className="py-1">
           <a
             href="#"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             onClick={handleLogout}
           >
             Sign out

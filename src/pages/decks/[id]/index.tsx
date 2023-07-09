@@ -26,7 +26,7 @@ export default function DeckPage() {
       title: `Room for ${deck.title}`,
     });
     if (response && response.status === 200 && response?.data?.id) {
-      router.push(`/rooms/${response.data.id}`);
+      await router.push(`/rooms/${response.data.id}`);
     }
   };
 
@@ -38,12 +38,10 @@ export default function DeckPage() {
       <div>
         <DeckIcon id={deckID} className="w-64 h-64 mb-16" />
       </div>
-      <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+      <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
         {deck.title}
       </h1>
-      <h2 className="mt-8 mb-4 font-light text-xl dark:text-white">
-        {deck.description}
-      </h2>
+      <h2 className="mt-8 mb-4 font-light text-xl">{deck.description}</h2>
       <Button onClick={handleButtonClick}>Create Room</Button>
     </div>
   );
