@@ -14,7 +14,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`flex relative justify-center items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-3xl w-20 ${className}`}
+      className={`flex relative justify-center items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-3xl ${className}`}
       onClick={onClick}
     >
       {isLoading ? (

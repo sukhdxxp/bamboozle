@@ -26,14 +26,14 @@ export default function DeckCard({ deck: { id, title } }: DeckCardProps) {
   };
   return (
     <div
-      className={`flex-none cursor-pointer rounded-lg shadow bg-blob-bg bg-center bg-cover w-64 mx-2 ${uiConfig.bgColor}`}
+      className={`flex-none cursor-pointer rounded-lg shadow bg-blob-bg bg-center bg-cover w-64 mx-2 md:my-2 ${uiConfig.bgColor}`}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img className="p-8" src={uiConfig.imageUrl} alt="Deck Image" />
       <div className="px-5 pb-5 flex justify-between items-center">
         <h5 className="text-md tracking-tight text-gray-900">{title}</h5>
         <Button
-          className={uiConfig.buttonColor}
+          className={`w-20 ${uiConfig.buttonColor}`}
           onClick={handleButtonClick}
           isLoading={isLoading}
         >
