@@ -24,7 +24,6 @@ export default function RoomPage() {
   const [room, loading, error] = useRoom(roomID);
   const [gameLoading, setGameLoading] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
-
   useEffect(() => {
     if (user) {
       const participantRef = ref(
@@ -82,8 +81,13 @@ export default function RoomPage() {
           <div
             className="rounded-3xl bg-teal-200 p-2 flex items-center content-center"
             onClick={() => {
-              navigator.clipboard.writeText(roomID).then((r) => {
-                console.log(r);
+              const origin =
+                typeof window !== "undefined" && window.location.origin
+                  ? window.location.origin
+                  : "";
+              const currentPageURL = `${origin}${router.asPath}`;
+              navigator.clipboard.writeText(currentPageURL).then((r) => {
+                console.log(currentPageURL);
               });
             }}
           >
@@ -113,7 +117,7 @@ export default function RoomPage() {
             </span>
           </div>
         </div>
-        <div className="bg-teal-100 my-4 py-4 px-6 rounded-lg bg-blob-bg">
+        <div className="bg-teal-100 my-4 py-4 px-6 rounded-lg bg-blob-bg-2 bg-cover">
           <h2 className="text-2xl text-gray-900">Players</h2>
           <div className="mt-6">
             {Object.keys(room.participants).map((key) => {
@@ -126,7 +130,7 @@ export default function RoomPage() {
             })}
           </div>
         </div>
-        <div className="absolute bottom-4 w-full px-4 py-2 left-0">
+        <div className="fixed bottom-4 w-full px-4 py-2 left-0">
           <Button
             className="w-full bg-teal-500 hover:bg-teal-600"
             onClick={handleButtonClick}

@@ -13,6 +13,8 @@ module.exports = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
         "blob-bg":
           "url('https://res.cloudinary.com/bamboozle/image/upload/v1688828168/bamboozle/bg/background7.svg')",
+        "blob-bg-2":
+          "url('https://res.cloudinary.com/bamboozle/image/upload/v1688828168/bamboozle/bg/background9.svg')",
       },
     },
   },
