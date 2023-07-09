@@ -11,7 +11,9 @@ if (!admin.apps.length) {
       }),
       databaseURL: process.env.NEXT_PUBLIC_FIREBASE_REALTIME_DB_URI,
     });
-  } catch (err) {}
+  } catch (err) {
+    console.log("Firebase admin initialization error", err);
+  }
 }
 
 const firebaseAdminAuth = admin.auth();
