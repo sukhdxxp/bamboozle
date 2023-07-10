@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 
 import Head from "next/head";
 import "./globals.css";
+import { RouteGuard } from "@/components/RouteGuard/RouteGuard";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
@@ -18,7 +19,9 @@ export default function MyApp({
       <Head>
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
-      <Component {...pageProps} />
+      <RouteGuard>
+        <Component {...pageProps} />
+      </RouteGuard>
     </div>
   );
 }

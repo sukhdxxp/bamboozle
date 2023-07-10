@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { ReactEventHandler, useRef } from "react";
 import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { firebaseAuth } from "@/lib/data/firebase";
 import { useOutsideClickHandler } from "@/hooks/useOutsideClickHandler";
 import { BiLogIn } from "react-icons/bi";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function UserDropdown() {
   const [user] = useAuthState(firebaseAuth);
@@ -19,7 +20,7 @@ export default function UserDropdown() {
 
   const handleLogin = async () => {
     try {
-      await signInWithPopup(firebaseAuth, googleProvider);
+      void signInWithPopup(firebaseAuth, googleProvider);
     } catch (e) {
       console.log(e);
     }
@@ -27,7 +28,7 @@ export default function UserDropdown() {
 
   const handleLogout = async () => {
     setIsDropdownOpen(false);
-    await signOut(firebaseAuth);
+    void signOut(firebaseAuth);
   };
 
   if (!user) {
@@ -46,13 +47,9 @@ export default function UserDropdown() {
   return (
     <div className="relative" ref={dropdownWrapperRef}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        id="avatarButton"
-        data-dropdown-toggle="userDropdown"
-        data-dropdown-placement="bottom-start"
-        className="w-10 h-10 rounded-full cursor-pointer ml-auto"
+      <UserAvatar
         src={imageUrl}
-        alt="User dropdown"
+        fullName={user.displayName}
         onClick={handleDropdownToggle}
       />
       <div
