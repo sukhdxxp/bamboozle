@@ -24,6 +24,7 @@ export default function RoomPage() {
   const [room, loading, error] = useRoom(roomID);
   const [gameLoading, setGameLoading] = React.useState(false);
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const [showToast, setShowToast] = React.useState(false);
   useEffect(() => {
     if (user) {
       const participantRef = ref(
@@ -59,15 +60,29 @@ export default function RoomPage() {
   }
 
   const handleButtonClick = () => {
+    setGameLoading(true);
     axios.post("/api/games", {
       roomID: roomID,
     });
   };
   const deck = room.currentDeck;
-  const deckId = deck.id;
-  const uiConfig = getDeckUiConfig(deckId);
+  const uiConfig = getDeckUiConfig(deck.id);
 
   const lineClamp = isExpanded ? "line-clamp-none" : "line-clamp-2";
+
+  const handleCopyIconClick = () => {
+    const origin =
+      typeof window !== "undefined" && window.location.origin
+        ? window.location.origin
+        : "";
+    const currentPageURL = `${origin}${router.asPath}`;
+    navigator.clipboard.writeText(currentPageURL).then((r) => {
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
+    });
+  };
 
   return (
     <div className="bg-teal-50 h-screen relative">
@@ -79,17 +94,8 @@ export default function RoomPage() {
         <div className="bg-teal-100 my-4 p-4 rounded-3xl flex items-center justify-between">
           <div>{roomID}</div>
           <div
-            className="rounded-3xl bg-teal-200 p-2 flex items-center content-center"
-            onClick={() => {
-              const origin =
-                typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin
-                  : "";
-              const currentPageURL = `${origin}${router.asPath}`;
-              navigator.clipboard.writeText(currentPageURL).then((r) => {
-                console.log(currentPageURL);
-              });
-            }}
+            className="rounded-3xl bg-teal-200 p-2 flex items-center content-center cursor-pointer"
+            onClick={handleCopyIconClick}
           >
             <BiCopy />
           </div>
@@ -140,6 +146,7 @@ export default function RoomPage() {
           </Button>
         </div>
       </div>
+      {showToast && <ToastMessage message="Copied to clipboard!" />}
     </div>
   );
 }
@@ -158,6 +165,14 @@ function ParticipantRow({ participant }: { participant: ParticipantType }) {
         alt="Bordered avatar"
       />
       <div className={"ml-4 flex items-center"}>{participant.name}</div>
+    </div>
+  );
+}
+
+function ToastMessage({ message }: { message: string }) {
+  return (
+    <div className="bg-gray-900 text-white p-4 rounded-lg absolute bottom-4 right-4">
+      {message}
     </div>
   );
 }

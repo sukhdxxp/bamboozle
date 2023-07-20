@@ -13,7 +13,7 @@ import { MappedQnaType } from "@/models/Deck.model";
 
 const GAME_CONFIG = {
   totalRounds: 3,
-  activeRoundDuration: 10000,
+  activeRoundDuration: 300000,
   waitingTime: 5000,
 };
 
