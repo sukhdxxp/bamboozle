@@ -136,14 +136,16 @@ export default function RoomPage() {
             })}
           </div>
         </div>
-        <div className="fixed bottom-4 w-full px-4 py-2 left-0">
-          <Button
-            className="w-full bg-teal-500 hover:bg-teal-600"
-            onClick={handleButtonClick}
-            isLoading={gameLoading}
-          >
-            Start Game
-          </Button>
+        <div className="fixed bottom-4 w-full left-0">
+          <div className="container mx-auto flex px-4">
+            <Button
+              className="w-full bg-teal-500 hover:bg-teal-600 "
+              onClick={handleButtonClick}
+              isLoading={gameLoading}
+            >
+              Start Game
+            </Button>
+          </div>
         </div>
       </div>
       {showToast && <ToastMessage message="Copied to clipboard!" />}
@@ -171,7 +173,7 @@ function ParticipantRow({ participant }: { participant: ParticipantType }) {
 
 function ToastMessage({ message }: { message: string }) {
   return (
-    <div className="bg-gray-900 text-white p-4 rounded-lg absolute bottom-4 right-4">
+    <div className="bg-gray-700 text-white p-2 rounded-lg absolute bottom-16 right-4 text-sm">
       {message}
     </div>
   );
