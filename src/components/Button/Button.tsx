@@ -5,17 +5,21 @@ type ButtonProps = {
   isLoading?: boolean;
   onClick: () => void;
   className?: string;
+  disabled?: boolean;
 };
 export default function Button({
   children,
   isLoading,
   onClick,
   className,
+  disabled,
 }: ButtonProps) {
+  const disabledClass = disabled ? "opacity-50 cursor-not-allowed" : "";
   return (
     <button
-      className={`flex relative justify-center items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-3xl ${className}`}
+      className={`flex relative justify-center items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-3xl ${className} ${disabledClass}`}
       onClick={onClick}
+      disabled={disabled}
     >
       {isLoading ? (
         <svg

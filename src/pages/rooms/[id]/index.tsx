@@ -1,67 +1,40 @@
 "use client";
 
-import { firebaseAuth, firebaseDB, ref } from "@/lib/data/firebase";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { ParticipantType } from "@/models/Room.model";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { onDisconnect, set } from "firebase/database";
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import axios from "../../../utils/axios";
 
 import Button from "@/components/Button";
 import { useRoom } from "@/hooks/useRoom";
-import DeckCard from "@/components/DeckCard";
 import Navigation from "@/components/Navigation";
 import { getDeckUiConfig } from "@/components/DeckCard/utils";
-import { BiCopy, BiSearch } from "react-icons/bi";
+import { BiCopy } from "react-icons/bi";
+import { AiFillDelete } from "react-icons/ai";
 
 export default function RoomPage() {
   const router = useRouter();
-  const [user, userLoading] = useAuthState(firebaseAuth);
   const roomID = router.query.id as string;
 
-  const [room, loading, error] = useRoom(roomID);
-  const [gameLoading, setGameLoading] = React.useState(false);
-  const [isExpanded, setIsExpanded] = React.useState(false);
-  const [showToast, setShowToast] = React.useState(false);
-  useEffect(() => {
-    if (user) {
-      const participantRef = ref(
-        firebaseDB,
-        `rooms/${roomID}/participants/${user?.uid}`
-      );
+  const [room, currentUserId, loading, error] = useRoom(roomID);
+  const [gameLoading, setGameLoading] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
-      onDisconnect(participantRef).update({
-        isOnline: false,
-        lastSeen: new Date().toISOString(),
-      });
-
-      set(participantRef, {
-        id: user?.uid,
-        name: user?.displayName,
-        avatar: user?.photoURL,
-        isOnline: true,
-        lastSeen: new Date().toISOString(),
-      });
-    }
-  }, [roomID, user]);
-
-  if (loading || userLoading) {
+  if (loading) {
     return <div>Loading...</div>;
   } else if (error) {
     return <div>Error: {error.toString()}</div>;
-  } else if (!room || !user) {
+  } else if (!room) {
     return <div>No Data Found</div>;
   }
 
-  if (room.currentGameId) {
-    router.push(`/games/${room.currentGameId}`);
-  }
+  const isCurrentUserAdmin = room.createdBy === currentUserId;
 
   const handleButtonClick = () => {
     setGameLoading(true);
-    axios.post("/api/games", {
+    void axios.post("/api/games", {
       roomID: roomID,
     });
   };
@@ -71,11 +44,10 @@ export default function RoomPage() {
   const lineClamp = isExpanded ? "line-clamp-none" : "line-clamp-2";
 
   const handleCopyIconClick = () => {
-    const origin =
-      typeof window !== "undefined" && window.location.origin
-        ? window.location.origin
+    const currentPageURL =
+      typeof window !== "undefined" && window.location.href
+        ? window.location.href
         : "";
-    const currentPageURL = `${origin}${router.asPath}`;
     navigator.clipboard.writeText(currentPageURL).then((r) => {
       setShowToast(true);
       setTimeout(() => {
@@ -131,6 +103,8 @@ export default function RoomPage() {
                 <ParticipantRow
                   key={key}
                   participant={room.participants[key]}
+                  isCurrentUserAdmin={isCurrentUserAdmin}
+                  currentUserId={currentUserId}
                 />
               );
             })}
@@ -142,6 +116,7 @@ export default function RoomPage() {
               className="w-full bg-teal-500 hover:bg-teal-600 "
               onClick={handleButtonClick}
               isLoading={gameLoading}
+              disabled={!isCurrentUserAdmin}
             >
               Start Game
             </Button>
@@ -153,10 +128,21 @@ export default function RoomPage() {
   );
 }
 
-function ParticipantRow({ participant }: { participant: ParticipantType }) {
+function ParticipantRow({
+  participant,
+  isCurrentUserAdmin,
+  currentUserId,
+}: {
+  participant: ParticipantType;
+  isCurrentUserAdmin: boolean;
+  currentUserId: string | null;
+}) {
   const avatarRingColor = participant.isOnline
     ? "dark:ring-green-500"
     : "dark:ring-gray-500";
+
+  const shouldShowRemoveIcon =
+    isCurrentUserAdmin && participant.id !== currentUserId;
 
   return (
     <div className="flex content-center my-4">
@@ -167,13 +153,18 @@ function ParticipantRow({ participant }: { participant: ParticipantType }) {
         alt="Bordered avatar"
       />
       <div className={"ml-4 flex items-center"}>{participant.name}</div>
+      {shouldShowRemoveIcon && (
+        <div className="ml-auto flex items-center cursor-pointer">
+          <AiFillDelete className="text-teal-700 w-6 h-6" />
+        </div>
+      )}
     </div>
   );
 }
 
 function ToastMessage({ message }: { message: string }) {
   return (
-    <div className="bg-gray-700 text-white p-2 rounded-lg absolute bottom-16 right-4 text-sm">
+    <div className="bg-gray-700 text-white p-2 rounded-lg fixed bottom-16 right-4 text-sm">
       {message}
     </div>
   );

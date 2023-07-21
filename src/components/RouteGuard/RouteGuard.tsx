@@ -25,14 +25,13 @@ export function RouteGuard({ children }: { children: React.ReactNode }) {
       router.events.off("routeChangeStart", hideContent);
       router.events.off("routeChangeComplete", authCheck);
     };
-  }, [router.asPath, router.events, isUserLoading]);
+  }, [router.asPath, router.events, isUserLoading, authCheck]);
 
   function authCheck(url: string) {
     const path = url.split("?")[0];
     if (publicPaths.includes(path)) {
       setAuthorized(true);
     } else {
-      console.log("authCheck", isUserLoading, user);
       if (!isUserLoading && !user) {
         setAuthorized(false);
         void router.push({
