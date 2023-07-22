@@ -1,6 +1,7 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { GameClientStateType } from "@/models/Game.model";
 import ProgressBar from "../ProgressBar/ProgressBar";
+import Button from "@/components/Button";
 
 type GameAnswerScreenProps = {
   game: GameClientStateType;
@@ -32,33 +33,27 @@ export default function GameAnswerScreen({
       <h1>Trick Answer</h1>
       <div>
         <ProgressBar duration={game.currentRoundDuration} />
-        <div className="mt-5">
+        <div className="bg-teal-100 my-4 p-4 rounded-3xl  mt-4">
           <div>
-            <h2>Question</h2>
             <p>{game.currentQuestion.question}</p>
           </div>
-          <label
-            htmlFor="message"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            Your message
-          </label>
           <textarea
             id="message"
-            rows={4}
-            className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            rows={8}
+            className="mt-4 block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Write the trick answer here..."
             onChange={(e) => setAnswer(e.target.value)}
           ></textarea>
         </div>
-        <div className="mt-2">
-          <button
-            type="button"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-full"
-            onClick={handleButtonClick}
-          >
-            Submit
-          </button>
+        <div className="fixed bottom-4 w-full left-0">
+          <div className="container mx-auto flex px-4">
+            <Button
+              className="w-full bg-teal-500 hover:bg-teal-600 "
+              onClick={handleButtonClick}
+            >
+              Submit Answer
+            </Button>
+          </div>
         </div>
       </div>
     </div>

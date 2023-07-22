@@ -11,7 +11,6 @@ import { useRoom } from "@/hooks/useRoom";
 import Navigation from "@/components/Navigation";
 import { getDeckUiConfig } from "@/components/DeckCard/utils";
 import { BiCopy } from "react-icons/bi";
-import { AiFillDelete } from "react-icons/ai";
 
 export default function RoomPage() {
   const router = useRouter();
@@ -103,8 +102,6 @@ export default function RoomPage() {
                 <ParticipantRow
                   key={key}
                   participant={room.participants[key]}
-                  isCurrentUserAdmin={isCurrentUserAdmin}
-                  currentUserId={currentUserId}
                 />
               );
             })}
@@ -128,21 +125,10 @@ export default function RoomPage() {
   );
 }
 
-function ParticipantRow({
-  participant,
-  isCurrentUserAdmin,
-  currentUserId,
-}: {
-  participant: ParticipantType;
-  isCurrentUserAdmin: boolean;
-  currentUserId: string | null;
-}) {
+function ParticipantRow({ participant }: { participant: ParticipantType }) {
   const avatarRingColor = participant.isOnline
     ? "dark:ring-green-500"
     : "dark:ring-gray-500";
-
-  const shouldShowRemoveIcon =
-    isCurrentUserAdmin && participant.id !== currentUserId;
 
   return (
     <div className="flex content-center my-4">
@@ -153,11 +139,6 @@ function ParticipantRow({
         alt="Bordered avatar"
       />
       <div className={"ml-4 flex items-center"}>{participant.name}</div>
-      {shouldShowRemoveIcon && (
-        <div className="ml-auto flex items-center cursor-pointer">
-          <AiFillDelete className="text-teal-700 w-6 h-6" />
-        </div>
-      )}
     </div>
   );
 }

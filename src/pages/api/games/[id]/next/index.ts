@@ -23,11 +23,7 @@ export default async function handler(
       return res.status(400).json({ message: "Missing Required Fields" });
     }
 
-    const game = new Game({
-      gameID,
-    });
-
-    await game.init();
+    const game = await Game.read(gameID);
     await game.startNewRound();
 
     return res.status(200).json({

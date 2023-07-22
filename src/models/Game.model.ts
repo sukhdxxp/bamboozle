@@ -56,6 +56,7 @@ export type GameClientStateType = {
 
 export interface IGame {
   id?: string;
+  deckId?: string;
   clientState: GameClientStateType;
   qna: MappedQnaType;
   scorecard: GameScorecard;

@@ -20,7 +20,6 @@ const GAME_CONFIG = {
 type GameConstructProps = {
   deckID?: string;
   participants?: { [p: string]: ParticipantType };
-  gameID?: string;
 };
 
 export class Game implements IGame {
@@ -40,15 +39,25 @@ export class Game implements IGame {
   qna: MappedQnaType = {};
   scorecard: GameScorecard = {};
 
-  constructor({ deckID, participants, gameID }: GameConstructProps) {
-    if (gameID) {
-      this.id = gameID;
-    } else if (participants && deckID) {
-      this.deckId = deckID;
-      this.transformParticipantsToGameParticipants(participants);
-    } else {
+  constructor({ deckID, participants }: GameConstructProps) {
+    if (!participants || !deckID) {
       throw new Error("[constructor]: Invalid Params");
     }
+    this.deckId = deckID;
+    this.transformParticipantsToGameParticipants(participants);
+  }
+
+  static async read(gameID: string) {
+    if (!gameID) {
+      throw new Error("Game ID not provided");
+    }
+    const gameData = await Game.fetchGameFromDatabase(gameID);
+    const game = new Game({
+      deckID: gameData.deckId,
+      participants: gameData.clientState.participants,
+    });
+    await game.init();
+    return game;
   }
 
   public async init() {
@@ -73,7 +82,7 @@ export class Game implements IGame {
     this.clientState.currentRoundDuration = GAME_CONFIG.activeRoundDuration;
     await this.updateGameInDatabase();
     setTimeout(() => {
-      this.moveGameStateToAnswerPicker();
+      // this.moveGameStateToAnswerPicker();
     }, this.clientState.currentRoundDuration);
   }
 
@@ -167,15 +176,20 @@ export class Game implements IGame {
     if (!gameID) {
       throw new Error("Game ID not provided to populate game from database");
     }
-    const game = await fetchValueFromDatabase(`games/${gameID}`);
-    if (!game) {
-      throw new Error("Game not found");
-    }
+    const game = await Game.fetchGameFromDatabase(gameID);
     this.id = gameID;
     this.deckId = game.deckId;
     this.clientState = game.clientState;
     this.qna = game.qna;
     this.scorecard = game.scorecard;
+  }
+
+  static async fetchGameFromDatabase(gameID: string) {
+    const game = await fetchValueFromDatabase(`games/${gameID}`);
+    if (!game) {
+      throw new Error("Game not found");
+    }
+    return game as IGame;
   }
 
   private populateAnswerOptionsInCurrentQnA() {

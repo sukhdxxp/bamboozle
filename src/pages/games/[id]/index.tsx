@@ -64,11 +64,11 @@ export default function GamePage() {
   };
 
   return (
-    <div>
+    <div className="bg-teal-50 h-screen relative">
       <Head>
         <title>Game Page</title>
       </Head>
-      <div>
+      <div className="px-4">
         <GameStateComponent
           game={game}
           handleTrickAnswerSubmission={handleTrickAnswerSubmission}
