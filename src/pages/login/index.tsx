@@ -8,10 +8,11 @@ import { useRouter } from "next/router";
 function LoginScreen() {
   const googleProvider = new GoogleAuthProvider();
   const router = useRouter();
+  const returnUrl = router.query.returnUrl as string;
   const GoogleLogin = async () => {
     try {
       await signInWithPopup(firebaseAuth, googleProvider);
-      await router.push("/user");
+      await router.push(returnUrl);
     } catch (e) {
       console.log(e);
     }

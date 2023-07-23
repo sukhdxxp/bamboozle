@@ -10,7 +10,7 @@ export enum GameState {
   FINISHED = "finished",
 }
 
-type ClientGameParticipantType = ParticipantType & {
+export type ClientGameParticipantType = ParticipantType & {
   score: number;
 };
 

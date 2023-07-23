@@ -47,7 +47,7 @@ export default function RoomPage() {
       typeof window !== "undefined" && window.location.href
         ? window.location.href
         : "";
-    navigator.clipboard.writeText(currentPageURL).then((r) => {
+    navigator.clipboard.writeText(currentPageURL).then(() => {
       setShowToast(true);
       setTimeout(() => {
         setShowToast(false);
@@ -73,6 +73,7 @@ export default function RoomPage() {
         </div>
         <div className="bg-teal-100 my-4 p-4 rounded-lg flex bg-blob-bg">
           <div className="flex-none w-24 h-24">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={uiConfig.imageUrl}
               alt="Deck icon"
@@ -125,7 +126,11 @@ export default function RoomPage() {
   );
 }
 
-function ParticipantRow({ participant }: { participant: ParticipantType }) {
+export function ParticipantRow({
+  participant,
+}: {
+  participant: ParticipantType;
+}) {
   const avatarRingColor = participant.isOnline
     ? "dark:ring-green-500"
     : "dark:ring-gray-500";

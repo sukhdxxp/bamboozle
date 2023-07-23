@@ -8,13 +8,19 @@ import { useObject } from "react-firebase-hooks/database";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { firebaseAuth, firebaseDB, ref } from "@/lib/data/firebase";
-import { GameClientStateType, GameState } from "@/models/Game.model";
+import {
+  ClientGameParticipantType,
+  GameClientStateType,
+  GameState,
+} from "@/models/Game.model";
 import GameInitScreen from "../../../components/GameInitScreen";
 import GameWriteAnswerScreen from "../../../components/GameScreen/GameAnswerScreen";
 import GamePickAnswerScreen from "@/components/GameScreen/GamePickAnswerScreen";
 import { uuidv4 } from "@firebase/util";
 import axios from "@/utils/axios";
 import GameScoreCard from "@/components/GameScreen/GameScoreCard";
+import Button from "@/components/Button";
+import React from "react";
 
 export default function GamePage() {
   const router = useRouter();
@@ -64,11 +70,11 @@ export default function GamePage() {
   };
 
   return (
-    <div className="bg-teal-50 h-screen relative">
+    <div className="bg-teal-50 h-screen relative bg-blob-bg bg-center bg-cover">
       <Head>
         <title>Game Page</title>
       </Head>
-      <div className="px-4">
+      <div className="p-4">
         <GameStateComponent
           game={game}
           handleTrickAnswerSubmission={handleTrickAnswerSubmission}
@@ -97,14 +103,30 @@ function GameStateComponent({
     case GameState.WAITING_IN_LOBBY:
       return (
         <div>
-          Waiting in lobby
-          <button
-            type="button"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-full"
-            onClick={handleNextRoundTrigger}
-          >
-            Next Round
-          </button>
+          <div className="bg-teal-100 my-4 py-4 px-6 rounded-lg bg-blob-bg-2 bg-cover">
+            <h2 className="text-2xl text-gray-900">Players</h2>
+            <div className="mt-6">
+              {Object.keys(game.participants).map((key) => {
+                return (
+                  <ParticipantRow
+                    key={key}
+                    participant={game.participants[key]}
+                  />
+                );
+              })}
+            </div>
+          </div>
+          <div className="fixed bottom-4 w-full left-0">
+            <div className="container mx-auto flex px-4">
+              <Button
+                className="w-full bg-teal-500 hover:bg-teal-600 "
+                onClick={handleNextRoundTrigger}
+                disabled={false}
+              >
+                Next Round
+              </Button>
+            </div>
+          </div>
         </div>
       );
     case GameState.WRITE_TRICK_ANSWER:
@@ -133,3 +155,27 @@ const getParticipantAnswerPath = (
 ) => {
   return `games/${gameID}/scorecard/${userId}/answers/${currentRoundIndex}`;
 };
+
+function ParticipantRow({
+  participant,
+}: {
+  participant: ClientGameParticipantType;
+}) {
+  const avatarRingColor = participant.isOnline
+    ? "dark:ring-green-500"
+    : "dark:ring-gray-500";
+
+  return (
+    <div className="flex content-center my-4">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        className={`w-12 h-12 p-1 rounded-full ring-2 ring-gray-300 ${avatarRingColor}`}
+        src={participant.avatar}
+        alt="Bordered avatar"
+      />
+      <div className={"ml-4 flex items-center"}>
+        {participant.name} - {participant.score}
+      </div>
+    </div>
+  );
+}

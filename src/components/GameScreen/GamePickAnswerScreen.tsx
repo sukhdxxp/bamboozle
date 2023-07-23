@@ -1,8 +1,9 @@
 // Create screen to pick answer
 
 import { GameClientStateType } from "@/models/Game.model";
-import { useState } from "react";
+import React, { useState } from "react";
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
+import Button from "@/components/Button";
 
 type GamePickAnswerScreenProps = {
   game: GameClientStateType;
@@ -51,15 +52,16 @@ export default function GamePickAnswerScreen({
           ))}
         </ul>
       </div>
-      <div className="mt-2">
-        <button
-          type="button"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-full"
-          disabled={answer === ""}
-          onClick={handleButtonClick}
-        >
-          Select
-        </button>
+      <div className="fixed bottom-4 w-full left-0">
+        <div className="container mx-auto flex px-4">
+          <Button
+            className="w-full bg-teal-500 hover:bg-teal-600 "
+            onClick={handleButtonClick}
+            disabled={!answer}
+          >
+            Select Answer
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -74,18 +76,21 @@ function AnswerListItem({
   answerOption,
   handleItemClick,
 }: AnswerListItemProps) {
+  const optionId = `answer-option-${answerOption.id}`;
+
   return (
     <li onClick={() => handleItemClick(answerOption.id)}>
       <input
         type="radio"
         name="answer-option"
+        id={optionId}
         value={answerOption.id}
         className="hidden peer"
         required
       />
       <label
-        htmlFor="hosting-small"
-        className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"
+        htmlFor={optionId}
+        className="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer peer-checked:border-teal-500 peer-checked:text-teal-500 peer-checked:font-medium"
       >
         <div className="block">
           <div className="w-full">{answerOption.text}</div>

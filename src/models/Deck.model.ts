@@ -2,6 +2,7 @@ export type DeckType = {
   id: string;
   title: string;
   description: string;
+  placeholder: string;
 };
 
 export type QnAItem = {

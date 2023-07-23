@@ -13,7 +13,7 @@ import { MappedQnaType } from "@/models/Deck.model";
 
 const GAME_CONFIG = {
   totalRounds: 3,
-  activeRoundDuration: 300000,
+  activeRoundDuration: 30 * 1000,
   waitingTime: 5000,
 };
 
@@ -52,11 +52,12 @@ export class Game implements IGame {
       throw new Error("Game ID not provided");
     }
     const gameData = await Game.fetchGameFromDatabase(gameID);
+    gameData.id = gameID;
     const game = new Game({
       deckID: gameData.deckId,
       participants: gameData.clientState.participants,
     });
-    await game.init();
+    game.updateLocalGameState(gameData);
     return game;
   }
 
@@ -82,7 +83,7 @@ export class Game implements IGame {
     this.clientState.currentRoundDuration = GAME_CONFIG.activeRoundDuration;
     await this.updateGameInDatabase();
     setTimeout(() => {
-      // this.moveGameStateToAnswerPicker();
+      this.moveGameStateToAnswerPicker();
     }, this.clientState.currentRoundDuration);
   }
 
@@ -177,7 +178,12 @@ export class Game implements IGame {
       throw new Error("Game ID not provided to populate game from database");
     }
     const game = await Game.fetchGameFromDatabase(gameID);
-    this.id = gameID;
+    game.id = gameID;
+    this.updateLocalGameState(game);
+  }
+
+  updateLocalGameState(game: IGame) {
+    this.id = game.id;
     this.deckId = game.deckId;
     this.clientState = game.clientState;
     this.qna = game.qna;
@@ -235,7 +241,9 @@ export class Game implements IGame {
         throw new Error("Participant not found");
       }
       const participantAnswers = participant.answers[currentRoundIndex];
-      const correctAnswer = Object.values(participantAnswers.correctAnswer)[0];
+      const correctAnswer = Object.values(
+        participantAnswers.correctAnswer || {}
+      )[0];
       if (correctAnswer === answer.id) {
         participant.score += 1;
       }
