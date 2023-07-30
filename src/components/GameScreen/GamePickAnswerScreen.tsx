@@ -2,8 +2,9 @@
 
 import { GameClientStateType } from "@/models/Game.model";
 import React, { useState } from "react";
-import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import Button from "@/components/Button";
+import CircularProgressBar from "@/components/CircularProgressBar";
+import WaitScreen from "@/components/WaitScreen";
 
 type GamePickAnswerScreenProps = {
   game: GameClientStateType;
@@ -22,12 +23,9 @@ export default function GamePickAnswerScreen({
   };
 
   if (isAnswerSubmitted) {
-    return (
-      <div>
-        <h1>Waiting for other players to submit their answers...</h1>
-      </div>
-    );
+    return <WaitScreen />;
   }
+
   const answerOptions = Object.keys(game.currentQuestion.answerOptions).map(
     (key) => {
       return {
@@ -39,8 +37,9 @@ export default function GamePickAnswerScreen({
 
   return (
     <div>
-      <h1>Game Pick Answer Screen</h1>
-      <ProgressBar duration={game.currentRoundDuration} />
+      <div className="flex flex-row-reverse	mx-2">
+        <CircularProgressBar duration={game.currentRoundDuration} />
+      </div>
       <div className="mt-4">
         <ul className="grid w-full gap-6">
           {answerOptions.map((answerOption, index) => (

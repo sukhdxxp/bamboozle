@@ -10,7 +10,8 @@ import Button from "@/components/Button";
 import { useRoom } from "@/hooks/useRoom";
 import Navigation from "@/components/Navigation";
 import { getDeckUiConfig } from "@/components/DeckCard/utils";
-import { BiCopy } from "react-icons/bi";
+import DeckDescriptionCard from "@/components/DeckDescriptionCard";
+import RoomHead from "@/components/RoomHead";
 
 export default function RoomPage() {
   const router = useRouter();
@@ -18,8 +19,6 @@ export default function RoomPage() {
 
   const [room, currentUserId, loading, error] = useRoom(roomID);
   const [gameLoading, setGameLoading] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -40,88 +39,36 @@ export default function RoomPage() {
   const deck = room.currentDeck;
   const uiConfig = getDeckUiConfig(deck.id);
 
-  const lineClamp = isExpanded ? "line-clamp-none" : "line-clamp-2";
-
-  const handleCopyIconClick = () => {
-    const currentPageURL =
-      typeof window !== "undefined" && window.location.href
-        ? window.location.href
-        : "";
-    navigator.clipboard.writeText(currentPageURL).then(() => {
-      setShowToast(true);
-      setTimeout(() => {
-        setShowToast(false);
-      }, 2000);
-    });
-  };
-
   return (
-    <div className="bg-teal-50 h-screen relative">
+    <div className="bg-teal-50 h-screen relative px-4">
       <Head>
         <title>Bamboozle - {room.title}</title>
       </Head>
       <Navigation />
-      <div className="px-4">
-        <div className="bg-teal-100 my-4 p-4 rounded-3xl flex items-center justify-between">
-          <div>{roomID}</div>
-          <div
-            className="rounded-3xl bg-teal-200 p-2 flex items-center content-center cursor-pointer"
-            onClick={handleCopyIconClick}
-          >
-            <BiCopy />
-          </div>
-        </div>
-        <div className="bg-teal-100 my-4 p-4 rounded-lg flex bg-blob-bg">
-          <div className="flex-none w-24 h-24">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={uiConfig.imageUrl}
-              alt="Deck icon"
-              className="w-24 h-24"
-            />
-          </div>
-          <div className="ml-4">
-            <h1 className="text-lg text-gray-900">{deck.title}</h1>
-            <p className={`text-sm text-gray-500 font-light mt-2 ${lineClamp}`}>
-              {deck.description}
-            </p>
-            <span
-              className="text-blue-600 text-sm ml-auto"
-              onClick={() => {
-                setIsExpanded(!isExpanded);
-              }}
-            >
-              {isExpanded ? "Show less" : "Show more"}
-            </span>
-          </div>
-        </div>
-        <div className="bg-teal-100 my-4 py-4 px-6 rounded-lg bg-blob-bg-2 bg-cover">
-          <h2 className="text-2xl text-gray-900">Players</h2>
-          <div className="mt-6">
-            {Object.keys(room.participants).map((key) => {
-              return (
-                <ParticipantRow
-                  key={key}
-                  participant={room.participants[key]}
-                />
-              );
-            })}
-          </div>
-        </div>
-        <div className="fixed bottom-4 w-full left-0">
-          <div className="container mx-auto flex px-4">
-            <Button
-              className="w-full bg-teal-500 hover:bg-teal-600 "
-              onClick={handleButtonClick}
-              isLoading={gameLoading}
-              disabled={!isCurrentUserAdmin}
-            >
-              Start Game
-            </Button>
-          </div>
+      <RoomHead roomId={roomID} />
+      <DeckDescriptionCard imageUrl={uiConfig.imageUrl} deck={deck} />
+      <div className="bg-teal-100 my-4 py-4 px-6 rounded-lg bg-blob-bg-2 bg-cover">
+        <h2 className="text-2xl text-gray-900">Players</h2>
+        <div className="mt-6">
+          {Object.keys(room.participants).map((key) => {
+            return (
+              <ParticipantRow key={key} participant={room.participants[key]} />
+            );
+          })}
         </div>
       </div>
-      {showToast && <ToastMessage message="Copied to clipboard!" />}
+      <div className="fixed bottom-4 w-full left-0">
+        <div className="container mx-auto flex px-4">
+          <Button
+            className="w-full"
+            onClick={handleButtonClick}
+            isLoading={gameLoading}
+            disabled={!isCurrentUserAdmin}
+          >
+            Start Game
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -144,14 +91,6 @@ export function ParticipantRow({
         alt="Bordered avatar"
       />
       <div className={"ml-4 flex items-center"}>{participant.name}</div>
-    </div>
-  );
-}
-
-function ToastMessage({ message }: { message: string }) {
-  return (
-    <div className="bg-gray-700 text-white p-2 rounded-lg fixed bottom-16 right-4 text-sm">
-      {message}
     </div>
   );
 }

@@ -1,94 +1,89 @@
+import { ColorVariant } from "@/components/common/uiConfig";
+
+export enum Decks {
+  BOOKS = "5c31acda71d37ab784ca76b9",
+  MOVIES = "5c31acda71d37ab784ca76ba",
+  FACT = "5c31acda71d37ab784ca76bb",
+  SWITCH = "5c31acda71d37ab784ca76bc",
+  TV = "5c31acda71d37ab784ca76bd",
+  POETRY = "5c31acda71d37ab784ca76be",
+  PLOT = "5c31acda71d37ab784ca76bf",
+  GUESS_NAME = "5c31acda71d37ab784ca76c0",
+  PROVERBS = "5c31acda71d37ab784ca76c1",
+  LAW = "5c31acda71d37ab784ca76c2",
+  ADULTS = "5c31acda71d37ab784ca76c3",
+  ANIMALS = "5c31acda71d37ab784ca76c4",
+}
+
+const baseImageUrl =
+  "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories";
+
 export const getDeckUiConfig = (id: string) => {
   switch (id) {
-    case "5c31acda71d37ab784ca76b9":
+    case Decks.BOOKS:
       return {
-        bgColor: "bg-rose-50",
-        buttonColor: "bg-rose-400 hover:bg-rose-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/books.png",
+        color: ColorVariant.Rose,
+        imageUrl: `${baseImageUrl}/books.png`,
       };
-    case "5c31acda71d37ab784ca76ba":
+    case Decks.MOVIES:
       return {
-        bgColor: "bg-teal-50",
-        buttonColor: "bg-teal-400 hover:bg-teal-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/movies.png",
+        color: ColorVariant.Teal,
+        imageUrl: `${baseImageUrl}/movies.png`,
       };
-    case "5c31acda71d37ab784ca76bb":
+    case Decks.FACT:
       return {
-        bgColor: "bg-indigo-50",
-        buttonColor: "bg-indigo-400 hover:bg-indigo-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/bulb.png",
+        color: ColorVariant.Violet,
+        imageUrl: `${baseImageUrl}/bulb.png`,
       };
-    case "5c31acda71d37ab784ca76bc":
+    case Decks.SWITCH:
       return {
-        bgColor: "bg-amber-50",
-        buttonColor: "bg-amber-400 hover:bg-amber-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/book2.png",
+        color: ColorVariant.Amber,
+        imageUrl: `${baseImageUrl}/book2.png`,
       };
-    case "5c31acda71d37ab784ca76bd":
+    case Decks.TV:
       return {
-        bgColor: "bg-cyan-50",
-        buttonColor: "bg-cyan-400 hover:bg-cyan-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/television.png",
+        color: ColorVariant.Rose,
+        imageUrl: `${baseImageUrl}/television.png`,
       };
-    case "5c31acda71d37ab784ca76be":
+    case Decks.POETRY:
       return {
-        bgColor: "bg-orange-50",
-        buttonColor: "bg-orange-400 hover:bg-orange-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/poetry.png",
+        color: ColorVariant.Teal,
+        imageUrl: `${baseImageUrl}/poetry.png`,
       };
-    case "5c31acda71d37ab784ca76bf":
+    case Decks.PLOT:
       return {
-        bgColor: "bg-voilet-50",
-        buttonColor: "bg-voilet-400 hover:bg-voilet-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/coffee.png",
+        color: ColorVariant.Violet,
+        imageUrl: `${baseImageUrl}/coffee.png`,
       };
-    case "5c31acda71d37ab784ca76c0":
+    case Decks.GUESS_NAME:
       return {
-        bgColor: "bg-fuchsia-50",
-        buttonColor: "bg-fuchsia-400 hover:bg-fuchsia-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/teddy-bear.png",
+        color: ColorVariant.Amber,
+        imageUrl: `${baseImageUrl}/teddy-bear.png`,
       };
-    case "5c31acda71d37ab784ca76c1":
+    case Decks.PROVERBS:
       return {
-        bgColor: "bg-yellow-50",
-        buttonColor: "bg-yellow-400 hover:bg-yellow-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/books.png",
+        color: ColorVariant.Rose,
+        imageUrl: `${baseImageUrl}/books.png`,
       };
-    case "5c31acda71d37ab784ca76c2":
+    case Decks.LAW:
       return {
-        bgColor: "bg-emerald-50",
-        buttonColor: "bg-emerald-400 hover:bg-emerald-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/scale.png",
+        color: ColorVariant.Teal,
+        imageUrl: `${baseImageUrl}/scale.png`,
       };
-    case "5c31acda71d37ab784ca76c3":
+    case Decks.ADULTS:
       return {
-        bgColor: "bg-purple-50",
-        buttonColor: "bg-purple-400 hover:bg-purple-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/lips.png",
+        color: ColorVariant.Violet,
+        imageUrl: `${baseImageUrl}/lips.png`,
       };
-    case "5c31acda71d37ab784ca76c4":
+    case Decks.ANIMALS:
       return {
-        bgColor: "bg-pink-50",
-        buttonColor: "bg-pink-400 hover:bg-pink-700",
-        imageUrl:
-          "https://res.cloudinary.com/bamboozle/image/upload/v1688823702/bamboozle/categories/dog.png",
+        color: ColorVariant.Amber,
+        imageUrl: `${baseImageUrl}/dog.png`,
       };
 
     default:
       return {
-        bgColor: "bg-pink-50",
-        buttonColor: "bg-pink-400 hover:bg-pink-700",
+        color: ColorVariant.Teal,
       };
   }
 };

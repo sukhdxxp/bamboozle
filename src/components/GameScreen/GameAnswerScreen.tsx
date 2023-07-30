@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { GameClientStateType } from "@/models/Game.model";
-import ProgressBar from "../ProgressBar/ProgressBar";
 import Button from "@/components/Button";
+import CircularProgressBar from "@/components/CircularProgressBar";
+import WaitScreen from "@/components/WaitScreen";
 
 type GameAnswerScreenProps = {
   game: GameClientStateType;
@@ -21,16 +22,14 @@ export default function GameAnswerScreen({
   };
 
   if (isAnswerSubmitted) {
-    return (
-      <div>
-        <h1>Waiting for other players to submit their answers...</h1>
-      </div>
-    );
+    return <WaitScreen />;
   }
 
   return (
     <div>
-      <ProgressBar duration={game.currentRoundDuration} />
+      <div className="flex flex-row-reverse	mx-2">
+        <CircularProgressBar duration={game.currentRoundDuration} />
+      </div>
       <div className="bg-teal-100 mb-4 p-4 rounded-3xl">
         <h1 className="text-2xl">{game.deck?.title}</h1>
         <div className="mt-2 text-slate-900 font-light">

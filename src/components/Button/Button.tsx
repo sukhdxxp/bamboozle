@@ -1,4 +1,6 @@
 import React from "react";
+import { ColorVariant } from "../common/uiConfig";
+import classNames from "classnames";
 
 type ButtonProps = {
   children: React.ReactNode;
@@ -6,6 +8,7 @@ type ButtonProps = {
   onClick: () => void;
   className?: string;
   disabled?: boolean;
+  color?: ColorVariant;
 };
 export default function Button({
   children,
@@ -13,11 +16,20 @@ export default function Button({
   onClick,
   className,
   disabled,
+  color = ColorVariant.Teal,
 }: ButtonProps) {
   const disabledClass = disabled ? "opacity-50 cursor-not-allowed" : "";
   return (
     <button
-      className={`flex relative justify-center items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-3xl ${className} ${disabledClass}`}
+      className={classNames(
+        `flex relative justify-center items-center bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-3xl ${className} ${disabledClass}`,
+        {
+          "bg-amber-400 hover:bg-amber-700": color === ColorVariant.Amber,
+          "bg-teal-400 hover:bg-teal-700": color === ColorVariant.Teal,
+          "bg-rose-400 hover:bg-rose-700": color === ColorVariant.Rose,
+          "bg-violet-400 hover:bg-violet-700": color === ColorVariant.Violet,
+        }
+      )}
       onClick={onClick}
       disabled={disabled}
     >
