@@ -10,8 +10,14 @@ export enum GameState {
   FINISHED = "finished",
 }
 
+type LastRoundType = {
+  tricked: string[];
+  trickedBy?: string;
+};
+
 export type ClientGameParticipantType = ParticipantType & {
   score: number;
+  lastRound: LastRoundType;
 };
 
 export type ClientGameParticipantsType = {
@@ -31,6 +37,7 @@ type GameScorecardItem = {
       };
     };
   };
+  lastRound: LastRoundType;
 };
 
 export type GameScorecard = {

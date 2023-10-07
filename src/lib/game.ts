@@ -107,11 +107,17 @@ export class Game implements IGame {
         [participantID]: {
           ...participants[participantID],
           score: 0,
+          lastRound: {
+            tricked: [],
+          },
         },
       };
       this.scorecard[participantID] = {
         score: 0,
         answers: {},
+        lastRound: {
+          tricked: [],
+        },
       };
     });
   }

@@ -12,6 +12,7 @@ import Navigation from "@/components/Navigation";
 import { getDeckUiConfig } from "@/components/DeckCard/utils";
 import DeckDescriptionCard from "@/components/DeckDescriptionCard";
 import RoomHead from "@/components/RoomHead";
+import UserAvatar from "@/components/UserAvatar";
 
 export default function RoomPage() {
   const router = useRouter();
@@ -85,10 +86,11 @@ export function ParticipantRow({
   return (
     <div className="flex content-center my-4">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className={`w-12 h-12 p-1 rounded-full ring-2 ring-gray-300 ${avatarRingColor}`}
+      <UserAvatar
         src={participant.avatar}
-        alt="Bordered avatar"
+        fullName={participant.name}
+        hasBorder
+        isHighlighted={participant.isOnline}
       />
       <div className={"ml-4 flex items-center"}>{participant.name}</div>
     </div>
