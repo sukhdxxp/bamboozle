@@ -10,7 +10,7 @@ type GameScoreCardProps = {
 export default function GameScoreCard({ game }: GameScoreCardProps) {
   return (
     <>
-      <h3>Game Finished</h3>
+      <h3>Game Finished!</h3>
       <div className="bg-teal-100 my-4 py-4 px-6 rounded-lg bg-blob-bg-2 bg-cover">
         <h2 className="text-2xl text-gray-900">Players</h2>
         <div className="mt-6">
