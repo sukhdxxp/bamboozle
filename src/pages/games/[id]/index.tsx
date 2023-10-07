@@ -171,7 +171,7 @@ function ParticipantRow({
       <img
         className={`w-12 h-12 p-1 rounded-full ring-2 ring-gray-300 ${avatarRingColor}`}
         src={participant.avatar}
-        alt="Bordered avatar"
+        alt="Bordered avatar "
       />
       <div className={"ml-4 flex items-center"}>
         {participant.name} - {participant.score}
