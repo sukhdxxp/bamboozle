@@ -72,7 +72,7 @@ export default function GamePage() {
   return (
     <div className="bg-teal-50 h-screen relative bg-blob-bg bg-center bg-cover">
       <Head>
-        <title>Game Page</title>
+        <title>Game Page!</title>
       </Head>
       <div className="p-4">
         <GameStateComponent
