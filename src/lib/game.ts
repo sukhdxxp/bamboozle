@@ -257,6 +257,7 @@ export class Game implements IGame {
       const trickAnswerId = Object.keys(
         participantAnswers.trickAnswer || {}
       )[0];
+      const tricked: string[] = [];
       Object.keys(this.scorecard || {}).forEach((participantID) => {
         const competitor = this.scorecard?.[participantID];
         const competitorCorrectAnswer =
@@ -266,9 +267,16 @@ export class Game implements IGame {
         )[0];
         if (competitorCorrectAnswerId === trickAnswerId) {
           participant.score += 1;
+          tricked.push(participantID);
         }
       });
-      this.clientState.participants[participantID].score = participant.score;
+      this.clientState.participants[participantID] = {
+        ...this.clientState.participants[participantID],
+        score: participant.score,
+        lastRound: {
+          tricked: tricked,
+        },
+      };
     });
     if (currentRoundIndex === this.clientState.totalRounds) {
       this.clientState.state = GameState.FINISHED;
